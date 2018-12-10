@@ -1,10 +1,10 @@
 package com.github.nightgecko.primefactorizer
 
-import org.scalatest.FlatSpec
+import org.scalatest.AsyncFlatSpec
 
 import scala.util.{Failure, Success}
 
-class PrimeFactorizerSpec extends FlatSpec {
+class PrimeFactorizerSpec extends AsyncFlatSpec {
 
   import PrimeFactorizer._
 
@@ -68,6 +68,24 @@ class PrimeFactorizerSpec extends FlatSpec {
         case Success(_) => true
         case _ => false
       }
+    }
+  }
+
+  "PrimeFactorizer.calculatePrimeFactors" should "eventually return a iterable of 2 when invoked with a 2" in {
+    calculatePrimeFactors(2) map {
+      factors =>
+        assert {
+          factors == Iterable(2)
+        }
+    }
+  }
+
+  it should "eventually return a iterable of (2, 2, 7, 23) when invoked with a 644" in {
+    calculatePrimeFactors(644) map {
+      factors =>
+        assert {
+          factors == Iterable(2, 2, 7, 23)
+        }
     }
   }
 

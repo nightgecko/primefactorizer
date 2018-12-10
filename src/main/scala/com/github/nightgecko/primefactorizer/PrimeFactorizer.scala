@@ -2,6 +2,10 @@ package com.github.nightgecko.primefactorizer
 
 import java.util.Scanner
 
+import org.apache.commons.math3.primes.Primes
+
+import scala.collection.JavaConverters._
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
@@ -15,7 +19,7 @@ object PrimeFactorizer {
     println("Done!")
   }
 
-  def runCommandLineInterface(): Unit = {
+  private def runCommandLineInterface(): Unit = {
     print(s"Please enter a whole number between 2 and ${java.lang.Integer.MAX_VALUE}:")
     scanner.next() match {
       case "quit" | "\"quit\"" =>
@@ -34,7 +38,9 @@ object PrimeFactorizer {
 
   def parseCommand(command: String): Try[Int] = Try(command.toInt).filter(_ > 1)
 
-  def calculatePrimeFactors(input: Int): Future[List[Int]] = ???
+  def calculatePrimeFactors(input: Int): Future[Iterable[Int]] = Future {
+    Primes.primeFactors(input).asScala.map(_.toInt)
+  }
 
-  def findExistingPrimeFactors(input: Int): Future[Option[List[Int]]] = ???
+  def findExistingPrimeFactors(input: Int): Future[Option[Iterable[Int]]] = ???
 }
