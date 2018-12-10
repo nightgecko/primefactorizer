@@ -36,7 +36,7 @@ object PrimeFactorizer {
             println("Invalid input. Try again or type \"quit\" to exit.")
           case Success(value) =>
             val primeFactors = Await.result(processPrimeFactors(value, storageDir), Duration(30, TimeUnit.SECONDS))
-            println(s"$input's prime factors are: ${primeFactors.map(_.toString).reduce(_ + ", " + _)}")
+            println(s"$input's prime factors are: ${primeFactors.mkString(", ")}")
         }
         runCommandLineInterface(storageDir)
     }
