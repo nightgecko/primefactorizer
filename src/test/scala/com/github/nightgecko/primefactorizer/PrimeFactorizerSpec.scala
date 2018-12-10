@@ -2,6 +2,7 @@ package com.github.nightgecko.primefactorizer
 
 import java.io.File
 
+import org.apache.commons.io.FileUtils
 import org.scalatest.AsyncFlatSpec
 
 import scala.util.{Failure, Success}
@@ -97,7 +98,7 @@ class PrimeFactorizerSpec extends AsyncFlatSpec {
     findExistingPrimeFactors(2, calcedFactorsDir) map {
       factors =>
         assert {
-          factors.contains(Iterable(2))
+          factors == Iterable(2)
         }
     }
   }
@@ -106,15 +107,42 @@ class PrimeFactorizerSpec extends AsyncFlatSpec {
     findExistingPrimeFactors(642, calcedFactorsDir) map {
       factors =>
         assert {
-          factors.contains(Iterable(2, 3, 107))
+          factors == Iterable(2, 3, 107)
         }
     }
   }
 
-  it should "eventually return a iterable of (2, 3, 107) when invoked with a 644" in {
-    findExistingPrimeFactors(644, calcedFactorsDir) map {
-      case None => succeed
+  it should "eventually fail when invoked with a 644" in {
+    findExistingPrimeFactors(644, calcedFactorsDir) transform {
+      case Failure(_) => Success(succeed)
       case _ => fail("Non-existent file was read")
+    }
+  }
+
+  "PrimeFactorizer.processPrimeFactors" should "eventually return a iterable of 2 when invoked with a 2" in {
+    processPrimeFactors(2, calcedFactorsDir) map {
+      factors =>
+        assert {
+          factors == Iterable(2)
+        }
+    }
+  }
+
+  it should "eventually return a iterable of (2, 3, 107) when invoked with a 642" in {
+    processPrimeFactors(642, calcedFactorsDir) map {
+      factors =>
+        assert {
+          factors == Iterable(2, 3, 107)
+        }
+    }
+  }
+
+  it should "eventually return a iterable of (2, 2, 7, 23) when invoked with a 644" in {
+    processPrimeFactors(644, FileUtils.getTempDirectory) map {
+      factors =>
+        assert {
+          factors == Iterable(2, 2, 7, 23) && new File(FileUtils.getTempDirectory, "644.json").exists()
+        }
     }
   }
 }
