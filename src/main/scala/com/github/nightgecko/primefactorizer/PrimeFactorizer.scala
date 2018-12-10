@@ -1,6 +1,7 @@
 package com.github.nightgecko.primefactorizer
 
 import scala.concurrent.Future
+import scala.util.Try
 
 object PrimeFactorizer {
 
@@ -12,7 +13,7 @@ object PrimeFactorizer {
 
   def runCommandLineInterface(): Unit = ???
 
-  def parseCommand(command: String): Unit = ???
+  def parseCommand(command: String): Try[Int] = ???
 
   def calculatePrimeFactors(input: Int): Future[List[Int]] = ???
 
