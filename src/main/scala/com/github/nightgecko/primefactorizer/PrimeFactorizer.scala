@@ -2,6 +2,7 @@ package com.github.nightgecko.primefactorizer
 
 import java.io.{File, FileInputStream, FileNotFoundException}
 import java.util.Scanner
+import java.util.concurrent.TimeUnit
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.math3.primes.Primes
@@ -9,7 +10,8 @@ import play.api.libs.json.{JsArray, JsDefined, Json}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
 object PrimeFactorizer {
@@ -32,7 +34,9 @@ object PrimeFactorizer {
         parseCommand(input) match {
           case Failure(_) =>
             println("Invalid input. Try again or type \"quit\" to exit.")
-          case Success(value) => processPrimeFactors(value, storageDir)
+          case Success(value) =>
+            val primeFactors = Await.result(processPrimeFactors(value, storageDir), Duration(30, TimeUnit.SECONDS))
+            println(s"$input's prime factors are: ${primeFactors.map(_.toString).reduce(_ + ", " + _)}")
         }
         runCommandLineInterface(storageDir)
     }
