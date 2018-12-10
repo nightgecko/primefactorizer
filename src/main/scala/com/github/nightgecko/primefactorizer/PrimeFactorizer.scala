@@ -1,8 +1,10 @@
 package com.github.nightgecko.primefactorizer
 
+import java.io.{File, FileInputStream}
 import java.util.Scanner
 
 import org.apache.commons.math3.primes.Primes
+import play.api.libs.json.{JsArray, JsDefined, Json}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,5 +44,18 @@ object PrimeFactorizer {
     Primes.primeFactors(input).asScala.map(_.toInt)
   }
 
-  def findExistingPrimeFactors(input: Int): Future[Option[Iterable[Int]]] = ???
+  def findExistingPrimeFactors(input: Int, storageDir: File):Future[Option[Iterable[Int]]] = {
+    Future {
+      val targetFile = new File(storageDir, s"$input.json")
+      if(targetFile.exists() && targetFile.isFile) {
+        val json = Json.parse(new FileInputStream(targetFile))
+        json \ "primeFactors" match {
+          case JsDefined(JsArray(list)) => Some(list.map(_.as[Int]))
+          case _ => None
+        }
+      } else {
+        None
+      }
+    }
+  }
 }

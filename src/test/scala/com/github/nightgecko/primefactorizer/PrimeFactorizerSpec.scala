@@ -1,5 +1,7 @@
 package com.github.nightgecko.primefactorizer
 
+import java.io.File
+
 import org.scalatest.AsyncFlatSpec
 
 import scala.util.{Failure, Success}
@@ -7,6 +9,8 @@ import scala.util.{Failure, Success}
 class PrimeFactorizerSpec extends AsyncFlatSpec {
 
   import PrimeFactorizer._
+
+  private lazy val calcedFactorsDir: File = new File(getClass.getClassLoader.getResource("calcedFactors").getPath)
 
   "PrimeFactorizer.parseCommand" should "return a Failure when invoked with a non-number" in {
     assert {
@@ -89,4 +93,28 @@ class PrimeFactorizerSpec extends AsyncFlatSpec {
     }
   }
 
+  "PrimeFactorizer.findExistingPrimeFactors" should "eventually return a iterable of 2 when invoked with a 2" in {
+    findExistingPrimeFactors(2, calcedFactorsDir) map {
+      factors =>
+        assert {
+          factors.contains(Iterable(2))
+        }
+    }
+  }
+
+  it should "eventually return a iterable of (2, 3, 107) when invoked with a 642" in {
+    findExistingPrimeFactors(642, calcedFactorsDir) map {
+      factors =>
+        assert {
+          factors.contains(Iterable(2, 3, 107))
+        }
+    }
+  }
+
+  it should "eventually return a iterable of (2, 3, 107) when invoked with a 644" in {
+    findExistingPrimeFactors(644, calcedFactorsDir) map {
+      case None => succeed
+      case _ => fail("Non-existent file was read")
+    }
+  }
 }
