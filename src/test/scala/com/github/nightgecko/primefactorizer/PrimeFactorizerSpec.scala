@@ -44,6 +44,24 @@ class PrimeFactorizerSpec extends FlatSpec {
     }
   }
 
+  it should "return a Failure when invoked with a 0" in {
+    assert {
+      parseCommand("0") match {
+        case Failure(_) => true
+        case _ => false
+      }
+    }
+  }
+
+  it should "return a Failure when invoked with a 1" in {
+    assert {
+      parseCommand("1") match {
+        case Failure(_) => true
+        case _ => false
+      }
+    }
+  }
+
   it should "return a Success is invoked with a postive whole number within Int bounds" in {
     assert {
       parseCommand("1337") match {
